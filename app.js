@@ -89,7 +89,7 @@
 
     */
 
-    Auth.clientId = "j28hw1wtt0adjocbgipyj70zd6a8ssg";
+    Auth.clientId = "lx7k0zjg3m6pr504r4gyvnel0e2qtl0";
 
     var auth = new Auth();
     var chat = new Chat();
@@ -788,10 +788,11 @@
                     var user = chat.userdata(data);
                     var localuser = chat.localuser;
                     var highlight = this.highlightMessage(message, user);
+                    var isAction = message.indexOf('\u0001ACTION') !== 0;
                     message = this.processUserMessage(data, message, user, localuser);
 
                     var color;
-                    if (message[0] !== '\u0001')
+                    if (isAction)
                         message = ': ' + message;
                     else {
                         color = user.namecolor;
@@ -872,8 +873,13 @@
 
                         var reason_plain_lower = reason_plain.toLowerCase();
                         var user = data.params[1];
-                        var lines = $('.line[data-user=' + user + ']');
-                        lines.addClass('deleted');
+						var lines;
+						if ('target-msg-id' in data.tags && data.tags['target-msg-id'].length > 0) {
+							lines = $('.line[data-user=' + user + '][data-id=' + data.tags['target-msg-id'] + ']');
+						} else {
+							lines = $('.line[data-user=' + user + ']');
+						}
+						lines.addClass('deleted');
 
                         if (chat.timeouts[user]) {
                             var endtime_found = false;
